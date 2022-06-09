@@ -2,18 +2,23 @@ package net.datafaker;
 
 import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.Execution;
+import org.junit.jupiter.api.parallel.ExecutionMode;
+
+import java.util.regex.Pattern;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+@Execution(ExecutionMode.CONCURRENT)
 class StarCraftTest extends AbstractFakerTest {
-    private final String noLeadingTrailingWhitespaceRegex = "^(?! )[-A-Za-z\\d' ]*(?<! )$";
+    private static final Pattern NO_LEADING_TRAILING_WHITESPACE_REGEX = Pattern.compile("^(?! )[-A-Za-z\\d' ]*(?<! )$");
 
     @Test
     void testUnit() {
         String unit = faker.starCraft().unit();
         assertThat(unit)
             .isNotEmpty()
-            .matches(noLeadingTrailingWhitespaceRegex);
+            .matches(NO_LEADING_TRAILING_WHITESPACE_REGEX);
     }
 
     @RepeatedTest(1000)
@@ -22,7 +27,7 @@ class StarCraftTest extends AbstractFakerTest {
         // System.out.println(unit);
         assertThat(unit)
             .isNotEmpty()
-            .matches(noLeadingTrailingWhitespaceRegex);
+            .matches(NO_LEADING_TRAILING_WHITESPACE_REGEX);
     }
 
     @Test
@@ -30,7 +35,7 @@ class StarCraftTest extends AbstractFakerTest {
         String building = faker.starCraft().building();
         assertThat(building)
             .isNotEmpty()
-            .matches(noLeadingTrailingWhitespaceRegex);
+            .matches(NO_LEADING_TRAILING_WHITESPACE_REGEX);
     }
 
     @Test
@@ -38,7 +43,7 @@ class StarCraftTest extends AbstractFakerTest {
         String character = faker.starCraft().character();
         assertThat(character)
             .isNotEmpty()
-            .matches(noLeadingTrailingWhitespaceRegex);
+            .matches(NO_LEADING_TRAILING_WHITESPACE_REGEX);
     }
 
     @Test
@@ -46,7 +51,7 @@ class StarCraftTest extends AbstractFakerTest {
         String planet = faker.starCraft().planet();
         assertThat(planet)
             .isNotEmpty()
-            .matches(noLeadingTrailingWhitespaceRegex);
+            .matches(NO_LEADING_TRAILING_WHITESPACE_REGEX);
     }
 
     @RepeatedTest(1000)
@@ -54,7 +59,7 @@ class StarCraftTest extends AbstractFakerTest {
         String planet = faker.starCraft().planet();
         assertThat(planet)
             .isNotEmpty()
-            .matches(noLeadingTrailingWhitespaceRegex);
+            .matches(NO_LEADING_TRAILING_WHITESPACE_REGEX);
     }
 
 }

@@ -4,6 +4,8 @@ import org.apache.commons.validator.routines.EmailValidator;
 import org.assertj.core.api.Condition;
 import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.Execution;
+import org.junit.jupiter.api.parallel.ExecutionMode;
 
 import java.net.UnknownHostException;
 import java.util.ArrayList;
@@ -17,6 +19,7 @@ import static org.assertj.core.api.Assertions.anyOf;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.BDDAssertions.fail;
 
+@Execution(ExecutionMode.CONCURRENT)
 class InternetTest extends AbstractFakerTest {
 
     @Test

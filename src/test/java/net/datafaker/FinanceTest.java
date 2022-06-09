@@ -3,9 +3,12 @@ package net.datafaker;
 import org.apache.commons.validator.routines.checkdigit.LuhnCheckDigit;
 import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.Execution;
+import org.junit.jupiter.api.parallel.ExecutionMode;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+@Execution(ExecutionMode.CONCURRENT)
 class FinanceTest extends AbstractFakerTest {
 
     @RepeatedTest(100)

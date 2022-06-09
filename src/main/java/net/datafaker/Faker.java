@@ -6,6 +6,7 @@ import net.datafaker.service.RandomService;
 
 import java.nio.file.Path;
 import java.util.IdentityHashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Random;
@@ -284,6 +285,15 @@ public class Faker {
         return new FakeCollection.Builder<T>().faker(this);
     }
 
+    @SafeVarargs
+    public final <T> FakeCollection.Builder<T> collection(Supplier<T>... suppliers) {
+        return new FakeCollection.Builder<>(suppliers).faker(this);
+    }
+
+    public final <T> FakeCollection.Builder<T> collection(List<Supplier<T>> suppliers) {
+        return new FakeCollection.Builder<>(suppliers).faker(this);
+    }
+
     public Address address() {
         return getProvider(Address.class, () -> new Address(this));
     }
@@ -472,6 +482,10 @@ public class Faker {
 
     public Demographic demographic() {
         return getProvider(Demographic.class, () -> new Demographic(this));
+    }
+
+    public Departed departed() {
+        return getProvider(Departed.class, () -> new Departed(this));
     }
 
     public Dessert dessert() {
@@ -692,6 +706,10 @@ public class Faker {
         return getProvider(Mountaineering.class, () -> new Mountaineering(this));
     }
 
+    public Movie movie() {
+        return getProvider(Movie.class, () -> new Movie(this));
+    }
+
     public Music music() {
         return getProvider(Music.class, () -> new Music(this));
     }
@@ -800,6 +818,10 @@ public class Faker {
 
     public Size size() {
         return getProvider(Size.class, () -> new Size(this));
+    }
+
+    public Simpsons simpsons() {
+        return getProvider(Simpsons.class, () -> new Simpsons(this));
     }
 
     public SoulKnight soulKnight() {

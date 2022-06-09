@@ -3,6 +3,8 @@ package net.datafaker;
 import org.apache.commons.lang3.tuple.Pair;
 import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.Execution;
+import org.junit.jupiter.api.parallel.ExecutionMode;
 
 import java.math.BigDecimal;
 import java.util.HashMap;
@@ -16,6 +18,7 @@ import java.util.function.Function;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+@Execution(ExecutionMode.CONCURRENT)
 class NumberTest extends AbstractFakerTest {
 
     public static final int RANDOMIZATION_QUALITY_RANGE_END = 1000;
@@ -449,11 +452,13 @@ class NumberTest extends AbstractFakerTest {
     }
 
     @RepeatedTest(10)
+    @Execution(ExecutionMode.CONCURRENT)
     void testPositive() {
         assertThat(faker.number().positive()).isGreaterThan(0);
     }
 
     @RepeatedTest(10)
+    @Execution(ExecutionMode.CONCURRENT)
     void testNegative() {
         assertThat(faker.number().negative()).isLessThan(0);
 

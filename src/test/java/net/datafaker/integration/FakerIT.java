@@ -108,6 +108,7 @@ class FakerIT {
         testAllMethodsThatReturnStringsActuallyReturnStrings(faker.company());
         testAllMethodsThatReturnStringsActuallyReturnStrings(faker.country());
         testAllMethodsThatReturnStringsActuallyReturnStrings(faker.demographic());
+        testAllMethodsThatReturnStringsActuallyReturnStrings(faker.departed());
         testAllMethodsThatReturnStringsActuallyReturnStrings(faker.dessert());
         testAllMethodsThatReturnStringsActuallyReturnStrings(faker.device());
         testAllMethodsThatReturnStringsActuallyReturnStrings(faker.disease());
@@ -155,6 +156,7 @@ class FakerIT {
         testAllMethodsThatReturnStringsActuallyReturnStrings(faker.military());
         testAllMethodsThatReturnStringsActuallyReturnStrings(faker.mountain());
         testAllMethodsThatReturnStringsActuallyReturnStrings(faker.mountaineering());
+        testAllMethodsThatReturnStringsActuallyReturnStrings(faker.movie());
         testAllMethodsThatReturnStringsActuallyReturnStrings(faker.music());
         testAllMethodsThatReturnStringsActuallyReturnStrings(faker.name());
         testAllMethodsThatReturnStringsActuallyReturnStrings(faker.nation());
@@ -175,6 +177,7 @@ class FakerIT {
         testAllMethodsThatReturnStringsActuallyReturnStrings(faker.seinfeld());
         testAllMethodsThatReturnStringsActuallyReturnStrings(faker.shakespeare());
         testAllMethodsThatReturnStringsActuallyReturnStrings(faker.slackEmoji());
+        testAllMethodsThatReturnStringsActuallyReturnStrings(faker.simpsons());
         testAllMethodsThatReturnStringsActuallyReturnStrings(faker.space());
         testAllMethodsThatReturnStringsActuallyReturnStrings(faker.starCraft());
         testAllMethodsThatReturnStringsActuallyReturnStrings(faker.starTrek());

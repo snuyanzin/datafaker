@@ -194,6 +194,7 @@ Providers
 * Currency
 * DateAndTime
 * Demographic
+* Departed
 * Dessert
 * Device
 * Disease
@@ -250,6 +251,7 @@ Providers
 * Mood
 * Mountains
 * Mountaineering
+* Movie
 * Music
 * Name
 * Nation
@@ -277,6 +279,7 @@ Providers
 * Shakespeare
 * Sip
 * Size
+* Simpsons
 * SlackEmoji
 * SoulKnight
 * Space
