@@ -28,18 +28,17 @@ public class AbstractFakerTest {
     @BeforeEach
     public void before() {
         MockitoAnnotations.openMocks(this);
+    }
 
+    @BeforeAll
+    static void setup() {
+        faker = getFaker();
         Logger rootLogger = LogManager.getLogManager().getLogger("");
         Handler[] handlers = rootLogger.getHandlers();
         rootLogger.setLevel(Level.INFO);
         for (Handler h : handlers) {
             h.setLevel(Level.INFO);
         }
-    }
-
-    @BeforeAll
-    static void setup() {
-        faker = getFaker();
     }
 
     protected static Faker getFaker() {

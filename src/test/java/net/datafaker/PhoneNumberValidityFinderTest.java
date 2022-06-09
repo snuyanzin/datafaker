@@ -5,6 +5,8 @@ import com.google.i18n.phonenumbers.PhoneNumberUtil;
 import com.google.i18n.phonenumbers.Phonenumber;
 import net.datafaker.service.LocalePicker;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.Execution;
+import org.junit.jupiter.api.parallel.ExecutionMode;
 
 import java.util.HashMap;
 import java.util.List;
@@ -16,6 +18,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 /**
  * These tests use System.out.printlns because the error rate is quite high.
  */
+@Execution(ExecutionMode.CONCURRENT)
 class PhoneNumberValidityFinderTest {
 
     @Test

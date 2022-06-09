@@ -1,6 +1,8 @@
 package net.datafaker;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.Execution;
+import org.junit.jupiter.api.parallel.ExecutionMode;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -25,6 +27,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 /**
  * @author pmiklos
  */
+@Execution(ExecutionMode.CONCURRENT)
 class DateAndTimeTest extends AbstractFakerTest {
 
     @Test
@@ -141,17 +144,19 @@ class DateAndTimeTest extends AbstractFakerTest {
     @Test
     void futureWithMask() {
         String pattern = "YYYY MM.dd mm:hh:ss";
-        DateTimeFormatter.ofPattern(pattern).parse(faker.date().future(1, TimeUnit.HOURS, pattern));
-        DateTimeFormatter.ofPattern(pattern).parse(faker.date().future(20, 1, TimeUnit.HOURS, pattern));
-        DateTimeFormatter.ofPattern(pattern).parse(faker.date().future(20, TimeUnit.HOURS, new Date(), pattern));
+        final DateTimeFormatter formatter = DateTimeFormatter.ofPattern(pattern);
+        formatter.parse(faker.date().future(1, TimeUnit.HOURS, pattern));
+        formatter.parse(faker.date().future(20, 1, TimeUnit.HOURS, pattern));
+        formatter.parse(faker.date().future(20, TimeUnit.HOURS, new Date(), pattern));
     }
 
     @Test
     void pastWithMask() {
         String pattern = "YYYY MM.dd mm:hh:ss";
-        DateTimeFormatter.ofPattern(pattern).parse(faker.date().past(1, TimeUnit.DAYS, pattern));
-        DateTimeFormatter.ofPattern(pattern).parse(faker.date().past(20, 1, TimeUnit.DAYS, pattern));
-        DateTimeFormatter.ofPattern(pattern).parse(faker.date().past(1, TimeUnit.DAYS, new Date(), pattern));
+        final DateTimeFormatter formatter = DateTimeFormatter.ofPattern(pattern);
+        formatter.parse(faker.date().past(1, TimeUnit.DAYS, pattern));
+        formatter.parse(faker.date().past(20, 1, TimeUnit.DAYS, pattern));
+        formatter.parse(faker.date().past(1, TimeUnit.DAYS, new Date(), pattern));
     }
 
     @ParameterizedTest

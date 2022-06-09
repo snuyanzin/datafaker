@@ -4,6 +4,7 @@ import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Test;
 
 import java.util.Locale;
+import java.util.regex.Pattern;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -33,10 +34,10 @@ class MedicalTest extends AbstractFakerTest {
     void testDiagnosisCodeUS() {
         // will use icd-10-cm - https://www.johndcook.com/blog/2019/05/05/regex_icd_codes/
         Faker faker = new Faker(Locale.US);
-
+        final Pattern expected = Pattern.compile("[A-TV-Z]\\d[\\dAB](\\.[\\dA-TV-Z]{0,4})?");
         for (int i = 0; i < 100; i++) { // Loading the US data is slow.
             String actual = faker.medical().diagnosisCode();
-            assertThat(actual).matches("[A-TV-Z][0-9][0-9AB](\\.[0-9A-TV-Z]{0,4})?");
+            assertThat(actual).matches(expected);
         }
     }
 
@@ -46,7 +47,7 @@ class MedicalTest extends AbstractFakerTest {
         Faker faker = new Faker(new Locale("en", "au"));
 
         String actual = faker.medical().diagnosisCode();
-        assertThat(actual).matches("[A-Z][0-9]{1,2}\\.[0-9]{1,2}");
+        assertThat(actual).matches("[A-Z]\\d{1,2}\\.\\d{1,2}");
     }
 
     @RepeatedTest(100)
@@ -55,13 +56,13 @@ class MedicalTest extends AbstractFakerTest {
         Faker faker = new Faker(Locale.FRANCE);
 
         String actual = faker.medical().diagnosisCode();
-        assertThat(actual).matches("^[A-Z][0-9]{1,2}(\\.[0-9])?$");
+        assertThat(actual).matches("^[A-Z]\\d{1,2}(\\.\\d)?$");
     }
 
     @RepeatedTest(100)
     void testProcedureCodes() {
         // will use icd-10-pcs - https://regex101.com/library/nJ1wC4
         String procedureCode = faker.medical().procedureCode();
-        assertThat(procedureCode).matches("^[a-hj-np-zA-HJ-NP-Z0-9]{7}$");
+        assertThat(procedureCode).matches("^[a-hj-np-zA-HJ-NP-Z\\d]{7}$");
     }
 }

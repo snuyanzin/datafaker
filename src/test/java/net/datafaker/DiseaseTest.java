@@ -2,9 +2,12 @@ package net.datafaker;
 
 import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.Execution;
+import org.junit.jupiter.api.parallel.ExecutionMode;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+@Execution(ExecutionMode.CONCURRENT)
 class DiseaseTest extends AbstractFakerTest {
     @Test
     void testInternalDisease() {
@@ -55,31 +58,37 @@ class DiseaseTest extends AbstractFakerTest {
     }
 
     @RepeatedTest(1000)
+    @Execution(ExecutionMode.CONCURRENT)
     void testNeurologyWith1000Times() {
         assertThat(faker.disease().neurology()).isNotEmpty();
     }
 
     @RepeatedTest(1000)
+    @Execution(ExecutionMode.CONCURRENT)
     void testSurgeryWith1000Times() {
         assertThat(faker.disease().surgery()).isNotEmpty();
     }
 
     @RepeatedTest(1000)
+    @Execution(ExecutionMode.CONCURRENT)
     void testPaediatricsWith1000Times() {
         assertThat(faker.disease().paediatrics()).isNotEmpty();
     }
 
     @RepeatedTest(1000)
+    @Execution(ExecutionMode.CONCURRENT)
     void testGynecologyAndObstetricsWith1000Times() {
         assertThat(faker.disease().gynecologyAndObstetrics()).isNotEmpty();
     }
 
     @RepeatedTest(1000)
+    @Execution(ExecutionMode.CONCURRENT)
     void testOphthalmologyAndOtorhinolaryngologyWith1000Times() {
         assertThat(faker.disease().ophthalmologyAndOtorhinolaryngology()).isNotEmpty();
     }
 
     @RepeatedTest(10000)
+    @Execution(ExecutionMode.CONCURRENT)
     void testDermatoloryWith10000Times() {
         assertThat(faker.disease().dermatolory()).isNotEmpty();
     }

@@ -5,11 +5,15 @@ import com.google.i18n.phonenumbers.PhoneNumberUtil;
 import com.google.i18n.phonenumbers.Phonenumber;
 import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.Execution;
+import org.junit.jupiter.api.parallel.ExecutionMode;
 
 import java.util.Locale;
+import java.util.regex.Pattern;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+@Execution(ExecutionMode.CONCURRENT)
 class PhoneNumberTest extends AbstractFakerTest {
     private static final Faker US_FAKER = new Faker(new Locale("en_US"));
     private static final Faker SE_FAKER = new Faker(new Locale("sv_SE"));
@@ -98,9 +102,11 @@ class PhoneNumberTest extends AbstractFakerTest {
     @Test
     void testPhone_esMx() {
         final Faker f = new Faker(new Locale("es_MX"));
+        final Pattern esMXCellPhone = Pattern.compile("(044 )?\\(?\\d+\\)?([- .]\\d+){1,3}");
+        final Pattern esMXPhoneNumber = Pattern.compile("\\(?\\d+\\)?([- .]\\d+){1,3}");
         for (int i = 0; i < 100; i++) {
-            assertThat(f.phoneNumber().cellPhone()).matches("(044 )?\\(?\\d+\\)?([- .]\\d+){1,3}");
-            assertThat(f.phoneNumber().phoneNumber()).matches("\\(?\\d+\\)?([- .]\\d+){1,3}");
+            assertThat(f.phoneNumber().cellPhone()).matches(esMXCellPhone);
+            assertThat(f.phoneNumber().phoneNumber()).matches(esMXPhoneNumber);
         }
     }
 
@@ -113,9 +119,9 @@ class PhoneNumberTest extends AbstractFakerTest {
                 + "709|782|902|226|249|289|343|365|416|437|519|548|613|647|705|807|905|367|"
                 + "418|438|450|514|579|581|819|873|306|639|867";
             for (int i = 0; i < 100; i++) {
-                assertThat(f.phoneNumber().cellPhone()).matches(
-                    String.format("((1-)?(\\(?(%s)\\)?)|(%s))[- .]\\d{3}[- .]\\d{4}",
-                        canadianAreaCode, canadianAreaCode));
+                final Pattern expected = Pattern.compile(String.format("((1-)?(\\(?(%s)\\)?)|(%s))[- .]\\d{3}[- .]\\d{4}",
+                    canadianAreaCode, canadianAreaCode));
+                assertThat(f.phoneNumber().cellPhone()).matches(expected);
             }
         }
     }
