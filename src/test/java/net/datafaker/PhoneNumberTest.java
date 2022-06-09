@@ -5,8 +5,11 @@ import com.google.i18n.phonenumbers.PhoneNumberUtil;
 import com.google.i18n.phonenumbers.Phonenumber;
 import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
 import java.util.Locale;
+import java.util.regex.Pattern;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -20,11 +23,11 @@ class PhoneNumberTest extends AbstractFakerTest {
     private static final Faker PH_FAKER = new Faker(new Locale("en_PH"));
 
     private final PhoneNumberUtil util = PhoneNumberUtil.getInstance();
+    private final Phonenumber.PhoneNumber proto = new Phonenumber.PhoneNumber();
 
     @Test
     void testCellPhone_enUS() {
-        final Faker f = new Faker(Locale.US);
-        String cellPhone = f.phoneNumber().cellPhone();
+        String cellPhone = US_FAKER.phoneNumber().cellPhone();
         assertThat(cellPhone).matches("\\(?\\d+\\)?([- .]\\d+){1,3}");
     }
 
@@ -32,7 +35,7 @@ class PhoneNumberTest extends AbstractFakerTest {
     @RepeatedTest(100)
     void testAllCellPhone_enUS() throws NumberParseException {
         String phoneNumber = US_FAKER.phoneNumber().phoneNumber();
-        Phonenumber.PhoneNumber proto = util.parse(phoneNumber, "US");
+        util.parse(phoneNumber, "US", proto);
         assertThat(util.isValidNumberForRegion(proto, "US")).as(phoneNumber).isTrue();
     }
 
@@ -40,7 +43,7 @@ class PhoneNumberTest extends AbstractFakerTest {
     @RepeatedTest(100)
     void testAllCellPhone_svSE() throws NumberParseException {
         String phoneNumber = SE_FAKER.phoneNumber().phoneNumber();
-        Phonenumber.PhoneNumber proto = util.parse(phoneNumber, "SE");
+        util.parse(phoneNumber, "SE", proto);
         assertThat(util.isValidNumberForRegion(proto, "SE")).as(phoneNumber).isTrue();
     }
 
@@ -48,7 +51,7 @@ class PhoneNumberTest extends AbstractFakerTest {
     @RepeatedTest(100)
     void testAllCellPhone_csCZ() throws NumberParseException {
         String phoneNumber = CZ_FAKER.phoneNumber().phoneNumber();
-        Phonenumber.PhoneNumber proto = util.parse(phoneNumber, "CZ");
+        util.parse(phoneNumber, "CZ", proto);
         assertThat(util.isValidNumberForRegion(proto, "CZ")).as(phoneNumber).isTrue();
     }
 
@@ -59,7 +62,7 @@ class PhoneNumberTest extends AbstractFakerTest {
         int errorCount = 0;
         for (int i = 0; i < 100; i++) {
             String phoneNumber = GB_FAKER.phoneNumber().phoneNumber();
-            Phonenumber.PhoneNumber proto = util.parse(phoneNumber, "GB");
+            util.parse(phoneNumber, "GB", proto);
             if (!util.isValidNumberForRegion(proto, "GB")) {
                 errorCount++;
             }
@@ -76,7 +79,7 @@ class PhoneNumberTest extends AbstractFakerTest {
 
         for (int i = 0; i < 1000; i++) {
             String phoneNumber = NO_FAKER.phoneNumber().phoneNumber();
-            Phonenumber.PhoneNumber proto = util.parse(phoneNumber, "NO");
+            util.parse(phoneNumber, "NO", proto);
 
             if (!util.isValidNumberForRegion(proto, "NO")) {
                 errorCount++;
@@ -91,39 +94,40 @@ class PhoneNumberTest extends AbstractFakerTest {
     @RepeatedTest(100)
     void testAllCellPhone_nl() throws NumberParseException {
         String phoneNumber = NL_FAKER.phoneNumber().phoneNumber();
-        Phonenumber.PhoneNumber proto = util.parse(phoneNumber, "NL");
+        util.parse(phoneNumber, "NL", proto);
         assertThat(util.isValidNumberForRegion(proto, "NL")).as(phoneNumber).isTrue();
     }
 
     @Test
     void testPhone_esMx() {
         final Faker f = new Faker(new Locale("es_MX"));
+        final Pattern cellPhonePattern = Pattern.compile("(044 )?\\(?\\d+\\)?([- .]\\d+){1,3}");
+        final Pattern phoneNumberPattern = Pattern.compile("\\(?\\d+\\)?([- .]\\d+){1,3}");
         for (int i = 0; i < 100; i++) {
-            assertThat(f.phoneNumber().cellPhone()).matches("(044 )?\\(?\\d+\\)?([- .]\\d+){1,3}");
-            assertThat(f.phoneNumber().phoneNumber()).matches("\\(?\\d+\\)?([- .]\\d+){1,3}");
+            assertThat(f.phoneNumber().cellPhone()).matches(cellPhonePattern);
+            assertThat(f.phoneNumber().phoneNumber()).matches(phoneNumberPattern);
         }
     }
 
-    @Test
-    void testPhone_CA() {
-        final Locale[] locales = new Locale[]{Locale.CANADA, new Locale("ca")};
-        for (Locale locale : locales) {
-            final Faker f = new Faker(locale);
-            final String canadianAreaCode = "403|587|780|825|236|250|604|672|778|204|431|506|"
-                + "709|782|902|226|249|289|343|365|416|437|519|548|613|647|705|807|905|367|"
-                + "418|438|450|514|579|581|819|873|306|639|867";
-            for (int i = 0; i < 100; i++) {
-                assertThat(f.phoneNumber().cellPhone()).matches(
-                    String.format("((1-)?(\\(?(%s)\\)?)|(%s))[- .]\\d{3}[- .]\\d{4}",
-                        canadianAreaCode, canadianAreaCode));
-            }
+    @ParameterizedTest
+    @ValueSource(strings = {"en_CA", "ca"})
+    void testPhone_CA(String language) {
+        final Faker f = new Faker(new Locale(language));
+        final String canadianAreaCode = "403|587|780|825|236|250|604|672|778|204|431|506|"
+            + "709|782|902|226|249|289|343|365|416|437|519|548|613|647|705|807|905|367|"
+            + "418|438|450|514|579|581|819|873|306|639|867";
+        final Pattern caCodePattern = Pattern.compile(
+            String.format("((1-)?(\\(?(%s)\\)?)|(%s))[- .]\\d{3}[- .]\\d{4}",
+                canadianAreaCode, canadianAreaCode));
+        for (int i = 0; i < 100; i++) {
+            assertThat(f.phoneNumber().cellPhone()).matches(caCodePattern);
         }
     }
 
     @RepeatedTest(100)
     void testAllCellPhone_enPh() throws NumberParseException {
         String phoneNumber = PH_FAKER.phoneNumber().phoneNumber();
-        Phonenumber.PhoneNumber proto = util.parse(phoneNumber, "PH");
+        util.parse(phoneNumber, "PH", proto);
         assertThat(util.isValidNumberForRegion(proto, "PH")).as(phoneNumber).isTrue();
     }
 
