@@ -12,27 +12,12 @@ public class Locality extends AbstractProvider<BaseProviders> {
     private final static String resourcePath = "./src/main/resources";
     private final List<String> locales;
     private List<String> shuffledLocales = new ArrayList<>();
-    private final Random random;
 
     /**
      * Constructor for Locality class
      */
     public Locality(BaseProviders baseProviders) {
-        this(null, baseProviders);
-    }
-
-    /**
-     * Constructor for Locality class
-     *
-     * @param random random number generator (can utilize seed for deterministic random selection)
-     */
-    public Locality(Random random, BaseProviders baseProviders) {
         super(baseProviders);
-        if (random != null) {
-            this.random = random;
-        } else {
-            this.random = new Random();
-        }
         this.locales = allSupportedLocales();
     }
 
@@ -69,7 +54,7 @@ public class Locality extends AbstractProvider<BaseProviders> {
      * @return locale in the form: "English (United States) or English"
      */
     public String displayName() {
-        int randomIndex = random.nextInt(locales.size());
+        int randomIndex = faker.random().nextInt(locales.size());
         Locale locale = Locale.forLanguageTag(locales.get(randomIndex));
 
         String displayLanguage = locale.getDisplayLanguage(Locale.ENGLISH);
@@ -85,7 +70,7 @@ public class Locality extends AbstractProvider<BaseProviders> {
      * Locale is selected at random WITH replacement from all supported locales
      */
     public String localeString() {
-        return localeStringWithRandom(this.random);
+        return localeStringWithRandom(faker.random().getRandomInternal());
     }
 
     /**
@@ -106,7 +91,7 @@ public class Locality extends AbstractProvider<BaseProviders> {
      * Locale is selected at random WITHOUT replacement from all supported locales
      */
     public String localeStringWithoutReplacement() {
-        return localeStringWithoutReplacement(this.random);
+        return localeStringWithoutReplacement(faker.random().getRandomInternal());
     }
 
     /**
