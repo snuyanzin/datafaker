@@ -7,6 +7,7 @@ import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
@@ -147,6 +148,7 @@ public class FakeValues implements FakeValuesInterface {
                     }
                     map.put(toJavaNames(key), result.get(key));
                 }
+                enrichEntry(key, entry);
             }
             if (map == null) {
                 return;
@@ -154,6 +156,87 @@ public class FakeValues implements FakeValuesInterface {
             result.putAll(map);
         }
     }
+
+    private void enrichEntry(String className, List list) {
+        for (int i = 0; i < list.size(); i++) {
+            if (list.get(i) instanceof String) {
+                list.set(i, enrichString(className, (String) list.get(i)));
+            } else if (list.get(i) instanceof Map) {
+                final Map<?, ?> map = (Map<?, ?>) list.get(i);
+                for (Map.Entry e : map.entrySet()) {
+                    if (e.getValue() instanceof String) {
+                        e.setValue(enrichString(className, (String) e.getValue()));
+                    } else {
+                        enrichEntry(className, e);
+                    }
+                }
+            } else if (list.get(i) instanceof List) {
+                enrichEntry(className, (List) list.get(i));
+            } else {
+                enrichString(className, Objects.toString(list.get(i)));
+            }
+        }
+
+    }
+
+    private void enrichEntry(String className, Map.Entry<String, Object> entry) {
+        final Object value = entry.getValue();
+        if (value instanceof List) {
+            final List list = (List) value;
+            for (int i = 0; i < list.size(); i++) {
+                if (list.get(i) instanceof String) {
+                    list.set(i, enrichString(className, (String) list.get(i)));
+                } else if (list.get(i) instanceof List) {
+                    enrichEntry(className, (List) list.get(i));
+                }
+            }
+        } else if (value instanceof String) {
+            entry.setValue(enrichString(className, (String) value));
+        } else if (value instanceof Map) {
+            final Map<?, ?> map = (Map<?, ?>) value;
+            for (Map.Entry e : map.entrySet()) {
+                if (e.getValue() instanceof String) {
+                    e.setValue(enrichString(className, (String) e.getValue()));
+                } else {
+                    enrichEntry(className, e);
+                }
+            }
+        }
+    }
+
+    private String enrichString(String className, String s) {
+        StringBuilder sb = new StringBuilder();
+        int index = 0;
+        char c;
+        while (index < s.length()) {
+            while (index < s.length() - 1 && !(s.charAt(index) == '#' && s.charAt(index + 1) == '{') || index == s.length() - 1) {
+                sb.append(s.charAt(index));
+                index++;
+            }
+
+            if (index < s.length() - 1 && s.charAt(index + 1) == '{') {
+                StringBuilder f = new StringBuilder();
+                index += 2;
+                boolean isFunction = true;
+
+                while (index < s.length() && (c = s.charAt(index)) != '}') {
+                    if (isFunction && !Character.isDigit(c) && !Character.isLetter(c) && c != '_') {
+                        isFunction = false;
+                    }
+                    f.append(c);
+                    index++;
+                }
+                sb.append("#{");
+                if (isFunction) {
+                    sb.append(toJavaNames(className + "." + f));
+                } else {
+                    sb.append(f);
+                }
+            }
+        }
+        return sb.toString();
+    }
+
 
     private static String toJavaNames(String string) {
         final int length;

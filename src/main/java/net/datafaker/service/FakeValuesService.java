@@ -177,9 +177,9 @@ public class FakeValuesService {
             if (locale.equals(DEFAULT_LOCALE) && localeChain.size() > 1) {
                 continue;
             }
-            final Map<String, Object> stringObjectMap = key2fetchedObject.get(locale);
-            if (stringObjectMap != null && (result = stringObjectMap.get(key)) != null) {
-                return result;
+            final Map<String, Object> map = key2fetchedObject.get(locale);
+            if (map != null && map.containsKey(key)) {
+                return map.get(key);
             }
         }
 
@@ -188,7 +188,7 @@ public class FakeValuesService {
         for (Locale locale : localeChain) {
             Object currentValue = fakeValuesInterfaceMap.get(locale);
             for (int p = 0; currentValue != null && p < path.length; p++) {
-                String currentPath = path[p];
+                String currentPath = p == 0 ? path[p].toLowerCase(Locale.ROOT) : path[p];
                 if (currentValue instanceof Map) {
                     currentValue = ((Map<?, ?>) currentValue).get(currentPath);
                 } else {
@@ -204,6 +204,9 @@ public class FakeValuesService {
         }
         if (local2Add != null) {
             key2fetchedObject.get(local2Add).put(key, result);
+        } else {
+            key2fetchedObject.putIfAbsent(context.getLocale(), new HashMap<>());
+            key2fetchedObject.get(context.getLocale()).put(key, null);
         }
         return result;
     }
@@ -674,8 +677,32 @@ public class FakeValuesService {
         if (dotIndex >= 0) {
             supplier = () -> safeFetch(javaNameToYamlName(simpleDirective), context, null);
             resolved = supplier.get();
+            if (resolved == null) {
+                supplier = resolveFromMethodOn(current, directive.substring(dotIndex + 1), args);
+                if (supplier != null) {
+                    return supplier.get();
+                }
+            }
         }
 
+        return resolved;
+    }
+
+    private static Object getObject(Object resolved, String directive, int dotIndex) {
+        if (resolved instanceof String) {
+            String str = (String) resolved;
+            final int length = str.length();
+            if (dotIndex == -1 || length <= 3 || str.charAt(0) != '#' || str.charAt(1) != '{' || str.charAt(length - 1) != '}') {
+                return resolved;
+            }
+            for (int i = 2; i < length - 1; i++) {
+                final char c = str.charAt(i);
+                if (!Character.isLetter(c) && !Character.isDigit(c) && c != '_') {
+                    return resolved;
+                }
+            }
+            return "{#" + directive.substring(0, dotIndex) + "." + str.substring(2);
+        }
         return resolved;
     }
 
