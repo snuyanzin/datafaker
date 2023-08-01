@@ -13,6 +13,7 @@ import java.util.WeakHashMap;
 public class Text extends AbstractProvider<BaseProviders> {
 
     private final Map<TextConfigPojo, TextRuleConfig> configMap = new WeakHashMap<>();
+    private final Number number;
 
     public Character character() {
         return text(1, 1, true).charAt(0);
@@ -67,7 +68,7 @@ public class Text extends AbstractProvider<BaseProviders> {
     }
 
     public String text(int minimumLength, int maximumLength, boolean includeUppercase, boolean includeSpecial, boolean includeDigit) {
-        final int len = faker.number().numberBetween(minimumLength, maximumLength + 1);
+        final int len = number.numberBetween(minimumLength, maximumLength + 1);
         TextConfigPojo pojo = new TextConfigPojo(len, includeUppercase, includeSpecial, includeDigit);
         Text.TextRuleConfig config = configMap.get(pojo);
         if (config == null) {
@@ -83,7 +84,7 @@ public class Text extends AbstractProvider<BaseProviders> {
         }
 
 
-        return faker.text().text(config);
+        return text(config);
     }
 
     public static final String EN_LOWERCASE = "abcdefghijklmnopqrstuvwxyz";
@@ -93,6 +94,7 @@ public class Text extends AbstractProvider<BaseProviders> {
 
     public Text(BaseProviders faker) {
         super(faker);
+        number = faker.number();
     }
 
     public static class TextRuleConfig {

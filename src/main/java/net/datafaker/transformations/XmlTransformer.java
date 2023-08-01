@@ -23,7 +23,7 @@ public class XmlTransformer<IN> implements Transformer<IN, CharSequence> {
     }
 
     @Override
-    public CharSequence apply(IN input, Schema<IN, ?> schema) {
+    public CharSequence apply(IN input, Schema<IN, ?> schema, int estimatedLength) {
         StringBuilder sb = new StringBuilder();
         Arrays.stream(schema.getFields()).forEach(it -> apply(input, sb, it));
         return sb.toString();
@@ -36,8 +36,11 @@ public class XmlTransformer<IN> implements Transformer<IN, CharSequence> {
         }
 
         StringJoiner data = new StringJoiner(LINE_SEPARATOR);
+        int prev = 16;
         for (IN in : input) {
-            data.add(apply(in, schema));
+            CharSequence apply = apply(in, schema, prev);
+            prev = apply.length();
+            data.add(apply);
         }
 
         return data.toString();
@@ -46,8 +49,11 @@ public class XmlTransformer<IN> implements Transformer<IN, CharSequence> {
     @Override
     public CharSequence generate(Schema<IN, ?> schema, int limit) {
         StringBuilder sb = new StringBuilder();
+        int prev = 16;
         for (int i = 0; i < limit; i++) {
-            sb.append(apply(null, schema));
+            CharSequence apply = apply(null, schema, prev);
+            prev = apply.length();
+            sb.append(apply);
             if (i < limit - 1) {
                 sb.append(LINE_SEPARATOR);
             }

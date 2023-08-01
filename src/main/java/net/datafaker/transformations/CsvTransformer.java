@@ -23,9 +23,9 @@ public class CsvTransformer<IN> implements Transformer<IN, CharSequence> {
     }
 
     @Override
-    public CharSequence apply(IN input, Schema<IN, ?> schema) {
+    public CharSequence apply(IN input, Schema<IN, ?> schema, int estimatedLength) {
         Field<IN, ?>[] fields = schema.getFields();
-        StringBuilder sb = new StringBuilder();
+        StringBuilder sb = new StringBuilder(Math.max(16, estimatedLength));
         for (int i = 0; i < fields.length; i++) {
             //noinspection unchecked
             SimpleField<Object, ?> f = (SimpleField<Object, ?>) fields[i];
@@ -47,8 +47,11 @@ public class CsvTransformer<IN> implements Transformer<IN, CharSequence> {
         generateHeader(schema, sb);
 
         StringJoiner data = new StringJoiner(LINE_SEPARATOR);
+        int prev = 16;
         for (IN in : input) {
-            data.add(apply(in, schema));
+            CharSequence apply = apply(in, schema, prev);
+            prev = apply.length();
+            data.add(apply);
         }
 
         sb.append(data);
@@ -56,30 +59,38 @@ public class CsvTransformer<IN> implements Transformer<IN, CharSequence> {
     }
 
     private void addLine(StringBuilder sb, Object transform) {
+        StringBuilder s = new StringBuilder();
         if (transform instanceof CharSequence) {
-            addCharSequence(sb, (CharSequence) transform);
+            addCharSequence(s, (CharSequence) transform);
         } else {
-            sb.append(transform);
+            s.append(transform);
         }
+        sb.append(s);
     }
 
     private void addCharSequence(StringBuilder sb, CharSequence charSequence) {
         sb.append(quote);
-        for (int j = 0; j < charSequence.length(); j++) {
+        final int length = charSequence.length();
+        int last = 0;
+        for (int j = 0; j < length; j++) {
             final char c = charSequence.charAt(j);
             if (c == quote) {
-                sb.append(quote);
+                sb.append(charSequence, last, j + 1).append(quote);
+                last = j + 1;
             }
-            sb.append(c);
+        }
+        if (last < length) {
+            sb.append(charSequence, last, length);
         }
         sb.append(quote);
     }
 
     private void generateHeader(Schema<?, ?> schema, StringBuilder sb) {
         if (withHeader) {
-            for (int i = 0; i < schema.getFields().length; i++) {
+            final int length = schema.getFields().length;
+            for (int i = 0; i < length; i++) {
                 addLine(sb, schema.getFields()[i].getName());
-                if (i < schema.getFields().length - 1) {
+                if (i < length - 1) {
                     sb.append(separator);
                 }
             }
@@ -91,8 +102,11 @@ public class CsvTransformer<IN> implements Transformer<IN, CharSequence> {
     public String generate(Schema<IN, ?> schema, int limit) {
         StringBuilder sb = new StringBuilder();
         generateHeader(schema, sb);
+        int prev = 100;
         for (int i = 0; i < limit; i++) {
-            sb.append(apply(null, schema, i));
+            CharSequence apply = apply(null, schema, prev, i);
+            prev = apply.length();
+            sb.append(apply);
             if (i < limit - 1) {
                 sb.append(LINE_SEPARATOR);
             }

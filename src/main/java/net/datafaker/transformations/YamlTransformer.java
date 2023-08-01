@@ -13,7 +13,7 @@ public class YamlTransformer<IN> implements Transformer<IN, CharSequence> {
     private static final String INDENTATION = "  ";
 
     @Override
-    public CharSequence apply(IN input, Schema<IN, ?> schema) {
+    public CharSequence apply(IN input, Schema<IN, ?> schema, int estimatedLength) {
         Field<IN, ?>[] fields = schema.getFields();
 
         if (fields.length == 0) {
@@ -30,8 +30,11 @@ public class YamlTransformer<IN> implements Transformer<IN, CharSequence> {
         }
 
         StringJoiner data = new StringJoiner(LINE_SEPARATOR);
+        int prev = 16;
         for (IN in : input) {
-            data.add(apply(in, schema));
+            CharSequence apply = apply(in, schema, prev);
+            prev = apply.length();
+            data.add(apply);
         }
 
         return data.toString();
@@ -40,8 +43,11 @@ public class YamlTransformer<IN> implements Transformer<IN, CharSequence> {
     @Override
     public String generate(Schema<IN, ?> schema, int limit) {
         StringBuilder sb = new StringBuilder();
+        int prev = 16;
         for (int i = 0; i < limit; i++) {
-            sb.append(apply(null, schema));
+            CharSequence apply = apply(null, schema, prev);
+            prev = apply.length();
+            sb.append(apply);
             if (i < limit - 1) {
                 sb.append(LINE_SEPARATOR);
             }

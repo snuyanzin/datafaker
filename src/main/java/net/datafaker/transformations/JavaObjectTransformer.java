@@ -21,7 +21,7 @@ public class JavaObjectTransformer implements Transformer<Object, Object> {
     private static final Map<Class<?>, Constructor<?>> CLASS2CONSTRUCTOR = new IdentityHashMap<>();
 
     @Override
-    public Object apply(Object input, Schema<Object, ?> schema) {
+    public Object apply(Object input, Schema<Object, ?> schema, int estimatedLength) {
         Class clazz;
         Object result = null;
         if (input instanceof Class) {
@@ -111,7 +111,7 @@ public class JavaObjectTransformer implements Transformer<Object, Object> {
             }
         }
         for (Object elem: collection) {
-            apply(elem, schema);
+            apply(elem, schema, -1);
         }
         return collection;
     }

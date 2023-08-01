@@ -21,8 +21,11 @@ public class Internet extends AbstractProvider<BaseProviders> {
     private static final Pattern COLON = Pattern.compile(":");
     private static final List<String> HTTP_SCHEMES = List.of("http://", "https://");
 
+    private final Text text;
+
     protected Internet(BaseProviders faker) {
         super(faker);
+        text = faker.text();
     }
 
     public String emailAddress() {
@@ -165,7 +168,7 @@ public class Internet extends AbstractProvider<BaseProviders> {
     }
 
     public String password(int minimumLength, int maximumLength, boolean includeUppercase, boolean includeSpecial, boolean includeDigit) {
-        return faker.text().text(minimumLength, maximumLength, includeUppercase, includeSpecial, includeDigit);
+        return text.text(minimumLength, maximumLength, includeUppercase, includeSpecial, includeDigit);
     }
 
     /**

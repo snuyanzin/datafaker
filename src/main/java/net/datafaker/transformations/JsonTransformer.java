@@ -29,7 +29,7 @@ public class JsonTransformer<IN> implements Transformer<IN, Object> {
     }
 
     @Override
-    public String apply(IN input, Schema<IN, ?> schema) {
+    public String apply(IN input, Schema<IN, ?> schema, int estimatedLength) {
         Field<?, ?>[] fields = schema.getFields();
         StringBuilder sb = new StringBuilder();
         sb.append("{");
@@ -57,8 +57,11 @@ public class JsonTransformer<IN> implements Transformer<IN, Object> {
 
         StringJoiner data = new StringJoiner(LINE_SEPARATOR);
         Iterator<IN> iterator = input.iterator();
+        int prev = 16;
         while (iterator.hasNext()){
-            data.add(apply(iterator.next(), schema) + (commaBetweenObjects && iterator.hasNext() ? "," : ""));
+            CharSequence apply = apply(iterator.next(), schema, prev);
+            prev = apply.length();
+            data.add(apply + (commaBetweenObjects && iterator.hasNext() ? "," : ""));
         }
 
         return data.length() > 1 ? wrappers[0] + LINE_SEPARATOR + data + LINE_SEPARATOR + wrappers[1]
@@ -91,13 +94,16 @@ public class JsonTransformer<IN> implements Transformer<IN, Object> {
         StringBuilder sb = new StringBuilder();
         sb.append("[");
         int i = 0;
+        int prev = 16;
         for (Object value : collection) {
             if (i > 0) {
                 sb.append(", ");
             }
             i++;
             if (value instanceof CompositeField<?,?>) {
-                sb.append(apply(input,((CompositeField) value)));
+                CharSequence apply =  apply(input,((CompositeField) value), prev);
+                prev = apply.length();
+                sb.append(apply);
             } else {
                 applyValue(input, sb, value);
             }

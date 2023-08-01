@@ -57,7 +57,7 @@ class PhoneNumberValidityFinderTest extends BaseFakerTest<BaseFaker> {
     void testAllPhoneNumbers() {
         List<String> allSupportedLocales = faker.locality().allSupportedLocales();
         Map<Locale, Integer> errorCounts = new HashMap<>();
-
+        PhoneNumberUtil util = PhoneNumberUtil.getInstance();
         for (String supportedLocale : allSupportedLocales) {
             String country = supportedLocale;
             if (supportedLocale.contains("-")) {
@@ -65,15 +65,15 @@ class PhoneNumberValidityFinderTest extends BaseFakerTest<BaseFaker> {
                 supportedLocale = supportedLocale.split("-")[0];
             }
 
-            PhoneNumberUtil util = PhoneNumberUtil.getInstance();
             Locale locale = new Locale(supportedLocale, country);
             final BaseFaker f = new BaseFaker(locale);
             int errorCount = 0;
+            final PhoneNumber phoneNumber = f.phoneNumber();
             for (int i = 0; i < 100; i++) {
-                String phoneNumber = f.phoneNumber().phoneNumber();
+                String phoneNumberStr = phoneNumber.phoneNumber();
 
                 try {
-                    Phonenumber.PhoneNumber proto = util.parse(phoneNumber, country.toUpperCase());
+                    Phonenumber.PhoneNumber proto = util.parse(phoneNumberStr, country.toUpperCase());
 
                     if (!util.isValidNumber(proto)) {
                         errorCount++;

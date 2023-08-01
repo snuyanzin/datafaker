@@ -33,7 +33,7 @@ public class JavaObjectTransformerTest extends AbstractFakerTest {
 
         Collection<Person> persons = new ArrayList<>();
         for (int i = 0; i < 10; i++) {
-            Person person = (Person) jTransformer.apply(Person.class, schema);
+            Person person = (Person) jTransformer.apply(Person.class, schema, 1);
             assertThat(person.birthDate).isNotNull();
             assertThat(person.lastName).isNotNull();
             assertThat(person.firstName).isNotNull();
@@ -53,7 +53,7 @@ public class JavaObjectTransformerTest extends AbstractFakerTest {
 
         Collection<Client> clients = new ArrayList<>();
         for (int i = 0; i < 10; i++) {
-            Client client = (Client) jTransformer.apply(Client.class, schema);
+            Client client = (Client) jTransformer.apply(Client.class, schema, 1);
             assertThat(client.firstName()).isNotNull();
             assertThat(client.lastName()).isNotNull();
             assertThat(client.phoneNumber()).isNotNull();

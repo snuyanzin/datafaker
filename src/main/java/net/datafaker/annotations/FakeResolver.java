@@ -37,7 +37,7 @@ public class FakeResolver<T> {
             return generateFromDefaultSchema();
         }
 
-        return (T) JAVA_OBJECT_TRANSFORMER.apply(clazz, schema);
+        return (T) JAVA_OBJECT_TRANSFORMER.apply(clazz, schema, 1);
     }
 
     private T generateFromDefaultSchema() {
@@ -50,7 +50,7 @@ public class FakeResolver<T> {
             DEFAULT_SCHEMA_CACHE.put(clazz, useSchema);
         }
 
-        return (T) JAVA_OBJECT_TRANSFORMER.apply(clazz, useSchema);
+        return (T) JAVA_OBJECT_TRANSFORMER.apply(clazz, useSchema, 1);
     }
 
     private Schema<Object, T> getSchema(String pathToSchema) {

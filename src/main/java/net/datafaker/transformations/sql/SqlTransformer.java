@@ -10,7 +10,9 @@ import net.datafaker.transformations.Transformer;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.StringJoiner;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -40,6 +42,7 @@ public class SqlTransformer<IN> implements Transformer<IN, CharSequence> {
     private final Case keywordCase;
     private final boolean forceSqlQuoteIdentifierUsage;
 
+    private Map<String, Boolean> map = new HashMap<>();
     private final SqlDialect dialect;
 
     public static <IN> SqlTransformer.SqlTransformerBuilder<IN> builder() {
@@ -63,25 +66,32 @@ public class SqlTransformer<IN> implements Transformer<IN, CharSequence> {
 
     private boolean isSqlQuoteIdentifierRequiredFor(String name) {
         if (forceSqlQuoteIdentifierUsage) return true;
-        for (int i = 0; i < name.length(); i++) {
-            if (casing == Casing.TO_UPPER && Character.isLowerCase(name.charAt(i))
-                || casing == Casing.TO_LOWER && Character.isUpperCase(name.charAt(i))
-                || name.charAt(i) == openSqlIdentifier
-                || name.charAt(i) == closeSqlIdentifier
-                || name.charAt(i) == DEFAULT_CATALOG_SEPARATOR) {
+        if (map.getOrDefault(name, false)) {
+            return true;
+        }
+        int length = name.length();
+        for (int i = 0; i < length; i++) {
+            final char ch = name.charAt(i);
+            if (ch == openSqlIdentifier
+                || ch == closeSqlIdentifier
+                || ch == DEFAULT_CATALOG_SEPARATOR
+                || casing == Casing.TO_UPPER && Character.isLowerCase(ch)
+                || casing == Casing.TO_LOWER && Character.isUpperCase(ch)) {
+                map.put(name, true);
                 return true;
             }
         }
+        map.put(name, false);
         return false;
     }
 
     @Override
-    public CharSequence apply(IN input, Schema<IN, ?> schema) {
+    public CharSequence apply(IN input, Schema<IN, ?> schema, int estimatedLength) {
         return apply(input, schema, 0);
     }
 
     @Override
-    public CharSequence apply(IN input, Schema<IN, ?> schema, int rowId) {
+    public CharSequence apply(IN input, Schema<IN, ?> schema, int estimatedLength, int rowId) {
         //noinspection unchecked
         Field<?, ? extends CharSequence>[] fields = (Field<?, ? extends CharSequence>[]) schema.getFields();
         if (fields.length == 0) {
@@ -366,11 +376,17 @@ public class SqlTransformer<IN> implements Transformer<IN, CharSequence> {
     }
 
     private String generateSeparatedStatements(Schema<IN, ?> schema, List<IN> inputs, int limit) {
-        StringJoiner data = new StringJoiner(LINE_SEPARATOR);
+        StringBuilder data = new StringBuilder();
         limit = inputs != null ? Math.min(limit, inputs.size()) : limit;
+        int prev = 16;
         for (int i = 0; i < limit; i++) {
             IN input = inputs != null ? inputs.get(i) : null;
-            data.add(apply(input, schema) + ";");
+            CharSequence apply = apply(input, schema, prev);
+            prev = apply.length();
+            data.append(apply).append(";");
+            if (i < limit - 1) {
+                data.append(LINE_SEPARATOR);
+            }
         }
         return data.toString();
     }
