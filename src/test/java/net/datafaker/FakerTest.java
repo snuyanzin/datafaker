@@ -32,6 +32,12 @@ import static org.reflections.scanners.Scanners.SubTypes;
 class FakerTest extends AbstractFakerTest {
 
     @Test
+    void issue1168() {
+        (new Faker()).idNumber().valid();
+        (new Faker()).regexify("[a-z]{6}");
+    }
+
+    @Test
     void examplifyUppercaseLetters() {
         assertThat(faker.examplify("ABC")).matches("[A-Z]{3}");
     }
