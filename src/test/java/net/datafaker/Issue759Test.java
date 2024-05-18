@@ -4,7 +4,7 @@ import org.junit.jupiter.api.RepeatedTest;
 
 import java.util.Arrays;
 
-class Issue759 {
+class Issue759Test {
     static class WorkerThread extends Thread {
         final Faker _faker;
         final int _workerNum;
@@ -56,17 +56,10 @@ class Issue759 {
         return true;
     }
 
-    static void printIterations(int[] arr) {
-        for (int n : arr) {
-            System.err.print(" " + n);
-        }
-        System.err.println();
-    }
-
     @RepeatedTest(10)
     void issue759Test() throws InterruptedException {
         final int numThreads = 5;
-        final int iterationsPerThread = 20000;
+        final int iterationsPerThread = 60000;
 
         final Faker faker = new Faker();
 
@@ -80,17 +73,23 @@ class Issue759 {
         }
 
         int[] lastIters = getIterations(threads);
+        final int delayMs = 100;
+        final int maxIntervalWithoutChangesMs = 1000;
+        int intervalWithoutChanges = 0;
         while (true) {
-            Thread.sleep(100);
+            Thread.sleep(delayMs);
             int[] iters = getIterations(threads);
             if (Arrays.equals(lastIters, iters)) {
                 // Either all threads are done, or something is probably stuck
-                System.err.println();
                 if (allElementsEqual(iters, iterationsPerThread)) {
                     break;
+                } else if (Arrays.equals(lastIters, iters)) {
+                    intervalWithoutChanges += delayMs;
+                    if (intervalWithoutChanges > maxIntervalWithoutChangesMs) {
+                        throw new AssertionError("Not all of %s are equal to %s".formatted(Arrays.toString(iters), iterationsPerThread));
+                    }
                 } else {
-                    printIterations(iters);
-                    throw new RuntimeException();
+                    intervalWithoutChanges = 0;
                 }
             }
             lastIters = iters;
