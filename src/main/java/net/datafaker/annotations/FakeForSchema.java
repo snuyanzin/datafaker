@@ -1,3 +1,4 @@
+// LICENSE
 package net.datafaker.annotations;
 
 import java.lang.annotation.ElementType;

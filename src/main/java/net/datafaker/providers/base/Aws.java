@@ -1,3 +1,4 @@
+// LICENSE
 package net.datafaker.providers.base;
 
 import static net.datafaker.providers.base.Text.EN_UPPERCASE;

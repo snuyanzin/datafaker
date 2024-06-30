@@ -1,3 +1,4 @@
+// LICENSE
 package net.datafaker.providers.food;
 
 import net.datafaker.providers.base.AbstractProvider;

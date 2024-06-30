@@ -1,3 +1,4 @@
+// LICENSE
 package net.datafaker.formats;
 
 import net.datafaker.AbstractFakerTest;

@@ -1,3 +1,4 @@
+// LICENSE
 package net.datafaker.service;
 
 import org.junit.jupiter.api.BeforeEach;

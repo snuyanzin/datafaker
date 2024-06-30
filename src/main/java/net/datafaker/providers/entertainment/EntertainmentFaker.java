@@ -1,3 +1,4 @@
+// LICENSE
 package net.datafaker.providers.entertainment;
 
 import net.datafaker.providers.base.BaseFaker;

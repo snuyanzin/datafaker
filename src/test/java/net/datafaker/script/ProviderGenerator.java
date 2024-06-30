@@ -1,3 +1,4 @@
+// LICENSE
 package net.datafaker.script;
 
 import net.datafaker.providers.base.AbstractProvider;

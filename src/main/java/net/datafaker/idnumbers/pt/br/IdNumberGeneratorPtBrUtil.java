@@ -1,3 +1,4 @@
+// LICENSE
 package net.datafaker.idnumbers.pt.br;
 
 import net.datafaker.providers.base.BaseProviders;

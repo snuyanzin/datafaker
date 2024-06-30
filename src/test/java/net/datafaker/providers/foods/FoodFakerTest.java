@@ -1,3 +1,4 @@
+// LICENSE
 package net.datafaker.providers.foods;
 
 import net.datafaker.providers.base.BaseFakerTest;

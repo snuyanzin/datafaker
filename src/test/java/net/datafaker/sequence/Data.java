@@ -1,3 +1,4 @@
+// LICENSE
 package net.datafaker.sequence;
 
 import net.datafaker.providers.base.BaseFaker;

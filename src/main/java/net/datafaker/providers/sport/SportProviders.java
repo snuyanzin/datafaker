@@ -1,3 +1,4 @@
+// LICENSE
 package net.datafaker.providers.sport;
 
 import net.datafaker.providers.base.ProviderRegistration;

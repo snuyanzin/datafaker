@@ -1,3 +1,4 @@
+// LICENSE
 package net.datafaker.integration;
 
 import net.datafaker.service.FakeValuesService;

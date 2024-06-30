@@ -1,3 +1,4 @@
+// LICENSE
 package net.datafaker;
 
 import net.datafaker.annotations.Deterministic;

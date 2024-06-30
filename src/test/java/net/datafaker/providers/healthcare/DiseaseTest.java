@@ -1,3 +1,4 @@
+// LICENSE
 package net.datafaker.providers.healthcare;
 
 import org.junit.jupiter.api.RepeatedTest;

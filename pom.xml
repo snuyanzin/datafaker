@@ -55,6 +55,10 @@
                          locale. Turkish is a notoriously tricky locale. -->
         <surefire.argline>@{argLine} -Duser.language=TR -Duser.country=tr</surefire.argline>
         <kotlin.version>2.0.0</kotlin.version>
+        <spotless.license.header>// LICENSE
+            
+        </spotless.license.header>
+        <spotless.delimiter>package</spotless.delimiter>
     </properties>
     <licenses>
         <license>
@@ -241,6 +245,11 @@
                 <configuration>
                     <java>
                         <removeUnusedImports />
+
+                        <licenseHeader>
+                            <content>${spotless.license.header}</content>
+                            <delimiter>${spotless.delimiter}</delimiter>
+                        </licenseHeader>
                     </java>
                     <yaml>
                        <includes>

@@ -1,3 +1,4 @@
+// LICENSE
 package net.datafaker.providers.base;
 
 import static java.nio.charset.StandardCharsets.UTF_8;

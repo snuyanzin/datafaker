@@ -1,5 +1,4 @@
-
-
+// LICENSE
 package net.datafaker.providers.videogame;
 
 import java.util.List;

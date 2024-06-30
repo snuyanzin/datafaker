@@ -1,3 +1,4 @@
+// LICENSE
 package net.datafaker.idnumbers;
 
 import org.junit.jupiter.api.Test;

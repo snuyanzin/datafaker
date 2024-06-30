@@ -1,3 +1,4 @@
+// LICENSE
 package net.datafaker.transformations.sql;
 
 import java.util.function.Function;

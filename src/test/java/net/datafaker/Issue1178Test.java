@@ -1,3 +1,4 @@
+// LICENSE
 package net.datafaker;
 
 import org.junit.jupiter.api.Test;

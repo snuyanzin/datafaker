@@ -1,3 +1,4 @@
+// LICENSE
 package net.datafaker.transformations.sql;
 
 import net.datafaker.sequence.FakeSequence;

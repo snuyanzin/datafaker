@@ -1,3 +1,4 @@
+// LICENSE
 package net.datafaker.service.files;
 
 import java.util.ArrayList;

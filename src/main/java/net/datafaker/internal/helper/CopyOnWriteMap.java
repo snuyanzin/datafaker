@@ -1,3 +1,4 @@
+// LICENSE
 package net.datafaker.internal.helper;
 
 import java.util.Collection;

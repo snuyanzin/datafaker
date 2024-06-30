@@ -1,3 +1,4 @@
+// LICENSE
 package net.datafaker.idnumbers.pt.br;
 
 public final class DocumentFormatterUtil {

@@ -1,3 +1,4 @@
+// LICENSE
 package net.datafaker.providers.base;
 
 import net.datafaker.annotations.FakeResolver;

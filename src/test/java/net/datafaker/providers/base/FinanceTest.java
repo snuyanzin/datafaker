@@ -1,3 +1,4 @@
+// LICENSE
 package net.datafaker.providers.base;
 
 import org.apache.commons.validator.routines.checkdigit.LuhnCheckDigit;

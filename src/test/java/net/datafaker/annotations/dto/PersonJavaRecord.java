@@ -1,3 +1,4 @@
+// LICENSE
 package net.datafaker.annotations.dto;
 
 import net.datafaker.annotations.FakeForSchema;

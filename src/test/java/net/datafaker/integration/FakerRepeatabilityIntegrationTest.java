@@ -1,3 +1,4 @@
+// LICENSE
 package net.datafaker.integration;
 
 import com.google.common.collect.MapDifference;
