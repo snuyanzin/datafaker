@@ -1,6 +1,5 @@
 package net.datafaker.providers.base;
 
-import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import net.datafaker.Faker;
 import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Test;
@@ -13,9 +12,15 @@ import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.Period;
+import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeFormatterBuilder;
+import java.time.temporal.ChronoField;
 import java.time.temporal.ChronoUnit;
+import java.util.Collection;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static java.time.temporal.ChronoUnit.MINUTES;
@@ -95,15 +100,14 @@ class TimeAndDateTest {
             .isGreaterThanOrEqualTo(now.toEpochMilli());
     }
 
-    @Test
-    void testBetweenWithMaskReturningString() {
+    @ParameterizedTest
+    @MethodSource("generateFormatPatterns")
+    void testBetweenWithMaskReturningString(final String pattern, final DateTimeFormatter dateTimeFormatter) {
         Instant now = Instant.now();
         Instant then = Instant.now().plusMillis(1000);
-        String pattern = "yyyy MM.dd mm:hh:ss";
 
-        String date = timeAndDate.between(now, then, pattern);
-
-        assertValidDate(date, pattern);
+        assertValidDate(timeAndDate.between(now, then, pattern), dateTimeFormatter);
+        assertValidDate(timeAndDate.between(now, then, dateTimeFormatter), dateTimeFormatter);
     }
 
     @Test
@@ -143,25 +147,33 @@ class TimeAndDateTest {
     @Test
     void birthdayWithMask() {
         String pattern = "yyyy MM.dd";
-        String birthday = timeAndDate.birthday(1, 50, pattern);
-        assertValidDate(birthday, pattern);
+        DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern(pattern);
+        assertValidDate(timeAndDate.birthday(1, 50, pattern), dateTimeFormatter);
+        assertValidDate(timeAndDate.birthday(1, 50, dateTimeFormatter), dateTimeFormatter);
     }
 
-    @Test
-    void futureWithMask() {
-        String pattern = "yyyy MM.dd mm:hh:ss";
-        assertValidDate(timeAndDate.future(1, TimeUnit.HOURS, pattern), pattern);
-        assertValidDate(timeAndDate.future(20, 1, TimeUnit.HOURS, pattern), pattern);
-        assertValidDate(timeAndDate.future(20, TimeUnit.HOURS, Instant.now(), pattern), pattern);
-        assertValidDate(timeAndDate.future(900, TimeUnit.DAYS, Instant.now(), pattern), pattern);
+    @ParameterizedTest
+    @MethodSource("generateFormatPatterns")
+    void futureWithMask(final String pattern, final DateTimeFormatter dateTimeFormatter) {
+        assertValidDate(timeAndDate.future(1, TimeUnit.HOURS, pattern), dateTimeFormatter);
+        assertValidDate(timeAndDate.future(1, TimeUnit.HOURS, dateTimeFormatter), dateTimeFormatter);
+        assertValidDate(timeAndDate.future(20, 1, TimeUnit.HOURS, pattern), dateTimeFormatter);
+        assertValidDate(timeAndDate.future(20, 1, TimeUnit.HOURS, dateTimeFormatter), dateTimeFormatter);
+        assertValidDate(timeAndDate.future(20, TimeUnit.HOURS, Instant.now(), pattern), dateTimeFormatter);
+        assertValidDate(timeAndDate.future(20, TimeUnit.HOURS, Instant.now(), dateTimeFormatter), dateTimeFormatter);
+        assertValidDate(timeAndDate.future(900, TimeUnit.DAYS, Instant.now(), pattern), dateTimeFormatter);
+        assertValidDate(timeAndDate.future(900, TimeUnit.DAYS, Instant.now(), dateTimeFormatter), dateTimeFormatter);
     }
 
-    @Test
-    void pastWithMask() {
-        String pattern = "yyyy MM.dd mm:hh:ss";
-        assertValidDate(timeAndDate.past(1, TimeUnit.DAYS, pattern), pattern);
-        assertValidDate(timeAndDate.past(20, 1, TimeUnit.DAYS, pattern), pattern);
-        assertValidDate(timeAndDate.past(1, TimeUnit.DAYS, Instant.now(), pattern), pattern);
+    @ParameterizedTest
+    @MethodSource("generateFormatPatterns")
+    void pastWithMask(final String pattern, final DateTimeFormatter dateTimeFormatter) {
+        assertValidDate(timeAndDate.past(1, TimeUnit.DAYS, pattern), dateTimeFormatter);
+        assertValidDate(timeAndDate.past(1, TimeUnit.DAYS, dateTimeFormatter), dateTimeFormatter);
+        assertValidDate(timeAndDate.past(20, 1, TimeUnit.DAYS, pattern), dateTimeFormatter);
+        assertValidDate(timeAndDate.past(20, 1, TimeUnit.DAYS, dateTimeFormatter), dateTimeFormatter);
+        assertValidDate(timeAndDate.past(1, TimeUnit.DAYS, Instant.now(), pattern), dateTimeFormatter);
+        assertValidDate(timeAndDate.past(1, TimeUnit.DAYS, Instant.now(), dateTimeFormatter), dateTimeFormatter);
     }
 
     @Test
@@ -215,6 +227,13 @@ class TimeAndDateTest {
             .isInstanceOf(IllegalArgumentException.class);
     }
 
+    @ParameterizedTest
+    @MethodSource("generateComplexFormatPatterns")
+    void advancedDateTimePatter(final DateTimeFormatter dateTimeFormatter) {
+        assertValidDate(timeAndDate.future(1, TimeUnit.HOURS, dateTimeFormatter), dateTimeFormatter);
+        assertValidDate(timeAndDate.past(20, 1, TimeUnit.HOURS, dateTimeFormatter), dateTimeFormatter);
+    }
+
     private static Stream<Arguments> generateDurationsWithMaxOnly() {
         return Stream.of(
             Arguments.of(100, ChronoUnit.DAYS),
@@ -251,12 +270,35 @@ class TimeAndDateTest {
         );
     }
 
-    private void assertValidDate(String date, String pattern) {
-        assertThatCode(() -> parse(date, pattern)).doesNotThrowAnyException();
+    private static Collection<Arguments> generateFormatPatterns() {
+        final List<String> patterns =  List.of("yyyy MM.dd mm:hh:ss", "yyyy MM.dd");
+        return patterns.stream().map(t -> Arguments.of(t, DateTimeFormatter.ofPattern(t)))
+            .collect(Collectors.toList());
     }
 
-    @CanIgnoreReturnValue
-    private static LocalDate parse(String date, String pattern) {
-        return DateTimeFormatter.ofPattern(pattern).parse(date).query(LocalDate::from);
+    private static Collection<DateTimeFormatter> generateComplexFormatPatterns() {
+        final DateTimeFormatter nanosFormatter = new DateTimeFormatterBuilder()
+            .appendFraction(ChronoField.NANO_OF_SECOND, 1, 9, true)
+            .toFormatter();
+        return List.of(
+            new DateTimeFormatterBuilder()
+                .appendPattern("yyyy-MM-dd'T'HH:mm:ss")
+                .appendOptional(nanosFormatter)
+            .appendPattern("XXX")
+            .toFormatter(),
+            new DateTimeFormatterBuilder()
+                .appendPattern("yyyy-MM-dd'T'HH:mm:ss")
+                .appendOptional(nanosFormatter)
+                .appendPattern("XXX")
+                .toFormatter().withZone(ZoneId.of("Africa/Harare")),
+            new DateTimeFormatterBuilder()
+                .appendPattern("yyyy-MM-dd'T'HH:mm:ss")
+                .appendOptional(nanosFormatter)
+                .appendPattern("XXX")
+                .toFormatter().withZone(ZoneId.of("America/Guatemala")));
+    }
+
+    private void assertValidDate(String date, DateTimeFormatter formatter) {
+        assertThatCode(() -> formatter.parse(date).query(LocalDate::from)).as(() -> date).doesNotThrowAnyException();
     }
 }

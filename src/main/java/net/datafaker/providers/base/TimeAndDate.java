@@ -58,7 +58,19 @@ public class TimeAndDate extends AbstractProvider<BaseProviders> {
      * @return a string representation of a future date from now.
      */
     public String future(long atMost, TimeUnit unit, String pattern) {
-        return formatInstant(future(atMost, unit), pattern);
+        return future(atMost, unit, DateTimeFormatter.ofPattern(pattern));
+    }
+
+    /**
+     * Generates and converts to string representation a future date from now.
+     *
+     * @param atMost    at most this amount of time ahead from now exclusive.
+     * @param unit      the time unit.
+     * @param formatter date time formatter to format to string.
+     * @return a string representation of a future date from now.
+     */
+    public String future(long atMost, TimeUnit unit, DateTimeFormatter formatter) {
+        return formatInstant(future(atMost, unit), formatter);
     }
 
     /**
@@ -85,7 +97,21 @@ public class TimeAndDate extends AbstractProvider<BaseProviders> {
      * @return a string representation of a future date from now, with a minimum time.
      */
     public String future(long atMost, long minimum, TimeUnit unit, String pattern) {
-        return formatInstant(future(atMost, minimum, unit), pattern);
+        return future(atMost, minimum, unit, DateTimeFormatter.ofPattern(pattern));
+    }
+
+    /**
+     * Generates and converts to string representation
+     * of a future date from now, with a minimum time.
+     *
+     * @param atMost    at most this amount of time ahead from now exclusive.
+     * @param minimum   the minimum amount of time in the future from now.
+     * @param unit      the time unit.
+     * @param formatter date time formatter to format to string.
+     * @return a string representation of a future date from now, with a minimum time.
+     */
+    public String future(long atMost, long minimum, TimeUnit unit, DateTimeFormatter formatter) {
+        return formatInstant(future(atMost, minimum, unit), formatter);
     }
 
     /**
@@ -113,7 +139,21 @@ public class TimeAndDate extends AbstractProvider<BaseProviders> {
      * @return a string representation of a future date relative to {@code referenceDate}.
      */
     public String future(long atMost, TimeUnit unit, Instant referenceDate, String pattern) {
-        return formatInstant(future(atMost, unit, referenceDate), pattern);
+        return future(atMost, unit, referenceDate, DateTimeFormatter.ofPattern(pattern));
+    }
+
+    /**
+     * Generates and converts to string representation
+     * a future date relative to the {@code referenceDate}.
+     *
+     * @param atMost          at most this amount of time ahead to the {@code referenceDate} exclusive.
+     * @param unit            the time unit.
+     * @param referenceDate   the future date relative to this date.
+     * @param formatter       date time formatter to format to string.
+     * @return a string representation of a future date relative to {@code referenceDate}.
+     */
+    public String future(long atMost, TimeUnit unit, Instant referenceDate, DateTimeFormatter formatter) {
+        return formatInstant(future(atMost, unit, referenceDate), formatter);
     }
 
     /**
@@ -145,7 +185,19 @@ public class TimeAndDate extends AbstractProvider<BaseProviders> {
      * @return a string representation of a past date from now.
      */
     public String past(long atMost, TimeUnit unit, String pattern) {
-        return formatInstant(past(atMost, unit), pattern);
+        return past(atMost, unit, DateTimeFormatter.ofPattern(pattern));
+    }
+
+    /**
+     * Generates a string representation of a past date from now.
+     *
+     * @param atMost    at most this amount of time earlier from now exclusive.
+     * @param unit      the time unit.
+     * @param formatter date time formatter to format to string.
+     * @return a string representation of a past date from now.
+     */
+    public String past(long atMost, TimeUnit unit, DateTimeFormatter formatter) {
+        return formatInstant(past(atMost, unit), formatter);
     }
 
     /**
@@ -171,7 +223,20 @@ public class TimeAndDate extends AbstractProvider<BaseProviders> {
      * @return a string representation of a past date from now, with a minimum time.
      */
     public String past(long atMost, long minimum, TimeUnit unit, String pattern) {
-        return formatInstant(past(atMost, minimum, unit), pattern);
+        return past(atMost, minimum, unit, DateTimeFormatter.ofPattern(pattern));
+    }
+
+    /**
+     * Generates and converts to string representation a past date from now, with a minimum time.
+     *
+     * @param atMost    at most this amount of time earlier from now exclusive.
+     * @param minimum   the minimum amount of time in the past from now.
+     * @param unit      the time unit.
+     * @param formatter date time formatter to format to string.
+     * @return a string representation of a past date from now, with a minimum time.
+     */
+    public String past(long atMost, long minimum, TimeUnit unit, DateTimeFormatter formatter) {
+        return formatInstant(past(atMost, minimum, unit), formatter);
     }
 
     /**
@@ -187,6 +252,7 @@ public class TimeAndDate extends AbstractProvider<BaseProviders> {
         long pastMillis = referenceDate.toEpochMilli() - 1 - faker.random().nextLong(upperBoundMillis - 1);
         return Instant.ofEpochMilli(pastMillis);
     }
+
     /**
      * Generates a string representation of a past date relative to the {@code referenceDate}.
      *
@@ -197,7 +263,20 @@ public class TimeAndDate extends AbstractProvider<BaseProviders> {
      * @return a string representation of a past date relative to {@code referenceDate}.
      */
     public String past(long atMost, TimeUnit unit, Instant referenceDate, String pattern) {
-        return formatInstant(past(atMost, unit, referenceDate), pattern);
+        return past(atMost, unit, referenceDate, DateTimeFormatter.ofPattern(pattern));
+    }
+
+    /**
+     * Generates a string representation of a past date relative to the {@code referenceDate}.
+     *
+     * @param atMost        at most this amount of time past to the {@code referenceDate} exclusive.
+     * @param unit          the time unit.
+     * @param referenceDate the past date relative to this date.
+     * @param formatter     date time formatter to format to string.
+     * @return a string representation of a past date relative to {@code referenceDate}.
+     */
+    public String past(long atMost, TimeUnit unit, Instant referenceDate, DateTimeFormatter formatter) {
+        return formatInstant(past(atMost, unit, referenceDate), formatter);
     }
 
     /**
@@ -231,7 +310,20 @@ public class TimeAndDate extends AbstractProvider<BaseProviders> {
      * @throws IllegalArgumentException if the {@code to} date represents an earlier date than {@code from} date.
      */
     public String between(Instant from, Instant to, String pattern) throws IllegalArgumentException {
-        return formatInstant(between(from, to), pattern);
+        return between(from, to, DateTimeFormatter.ofPattern(pattern));
+    }
+
+    /**
+     * Generates a string representation of a random date between two dates.
+     *
+     * @param from      the lower bound inclusive
+     * @param to        the upper bound exclusive
+     * @param formatter date time formatter to format to string.
+     * @return a string representation of a random date between {@code from} and {@code to}.
+     * @throws IllegalArgumentException if the {@code to} date represents an earlier date than {@code from} date.
+     */
+    public String between(Instant from, Instant to, DateTimeFormatter formatter) throws IllegalArgumentException {
+        return formatInstant(between(from, to), formatter);
     }
 
     /**
@@ -250,7 +342,7 @@ public class TimeAndDate extends AbstractProvider<BaseProviders> {
      * @return a string representation of a random birthday between 65 and 18 years ago from now.
      */
     public String birthday(String pattern) {
-        return formatInstant(birthday(DEFAULT_MIN_AGE, DEFAULT_MAX_AGE), pattern);
+        return birthday(DEFAULT_MIN_AGE, DEFAULT_MAX_AGE, pattern);
     }
 
     /**
@@ -284,7 +376,20 @@ public class TimeAndDate extends AbstractProvider<BaseProviders> {
      * @throws IllegalArgumentException if the {@code maxAge} is lower than {@code minAge}.
      */
     public String birthday(int minAge, int maxAge, String pattern) {
-        return formatInstant(birthday(minAge, maxAge), pattern);
+        return birthday(minAge, maxAge, DateTimeFormatter.ofPattern(pattern));
+    }
+
+    /**
+     * Generates and converts to string representation a random birthday between two ages from now.
+     *
+     * @param minAge    the minimal age
+     * @param maxAge    the maximal age
+     * @param formatter date time formatter to format to string.
+     * @return a string representation of a random birthday between {@code minAge} and {@code maxAge} years ago from now.
+     * @throws IllegalArgumentException if the {@code maxAge} is lower than {@code minAge}.
+     */
+    public String birthday(int minAge, int maxAge, DateTimeFormatter formatter) {
+        return formatInstant(birthday(minAge, maxAge), formatter);
     }
 
     /**
@@ -330,10 +435,14 @@ public class TimeAndDate extends AbstractProvider<BaseProviders> {
             faker.random().nextInt(min.getDays(), max.getDays()));
     }
 
-    private static String formatInstant(TemporalAccessor instant, String pattern) {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern(pattern)
-            .withZone(ZoneId.systemDefault());
+    private static String formatInstant(TemporalAccessor instant, DateTimeFormatter formatter) {
+        final DateTimeFormatter formatterToUse;
+        if (formatter.getZone() == null) {
+            formatterToUse = formatter.withZone(ZoneId.systemDefault());
+        } else {
+            formatterToUse = formatter;
+        }
 
-        return formatter.format(instant);
+        return formatterToUse.format(instant);
     }
 }
